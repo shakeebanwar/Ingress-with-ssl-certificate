@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-demo
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+      - ingress.devssh.xyz
+    secretName: tls-secret
+  ingressClassName: nginx
+  rules:
+    - host: ingress.devssh.xyz
+      http:
+        paths:
+          - path: /v1
+            pathType: Prefix 
+            backend:
+              service:
+                name: app1
+                port:
+                  number: 8000
+          - path: /v2
+            pathType: Prefix 
+            backend:
+              service:
+                name: app2
+                port:
+                  number: 8000

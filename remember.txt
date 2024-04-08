@@ -1,0 +1,55 @@
+Installation Ingress Controller:
+
+* kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+
+After Installation is complete run these commands to verify the ingress is working:
+
+* kubectl get ns
+
+Now,you can see that the new ingress-nginx resource is created
+After Installation is successful, Now you can apply pods,service and ingress file using the following command:
+
+* kubectl apply -f filename
+
+After accesss these link http://ingress.devssh.xyz/v2 now you can see the application is running but one issue is remaining application is running only http , next step is securing your application using lets encrypt.
+
+Install the certmanager namespace using the following command:
+
+* kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
+
+After installation is complete run the following command to verify the installation is successful
+
+* kubectl get pods -n cert-manager
+
+Now,apply the prod-issuer file using the following command
+* kubectl apply -f prod-issuer.yaml
+
+After apply the prod-issuer file run the following command and you can see that the a new letsencrypt- scret  is created.
+
+* kubectl get secret -n cert-manager
+
+
+Now,Change the ingress.yaml file to apply the ssl certificate :
+
+updated ingress.yaml:
+
+
+metadata:
+  name: ingress-demo
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: "nginx"
+
+spec:
+  tls:
+  - hosts:
+      - ingress.devssh.xyz
+    secretName: tls-secret
+
+add the annotations and tls field to apply the ssl certificate after update file run the command 
+
+* kubectl apply -f ingress.yaml
+
+
+SSl certificate is successful configure
+
